@@ -2,26 +2,26 @@
 
 ___
 
-This lab documents demostrate the use of AWS Systems Manager and AWS CloudShell to achieve secure, scalable server management and AWS resource administration without traditional SSH access or local CLI setup.
+This lab documents demonstrate how i used AWS Systems Manager and AWS CloudShell to achieve secure, scalable server management and AWS resource administration without traditional SSH access or local CLI setup.
 
 ___
 
 The scope of this project included the following tasks:
 
-1. Accessing EC2 Without SSH Using AWS Systems Manage
-2. Creating an IAM Role for AWS Systems Manager
-3. Attaching the IAM Role to the EC2 Instance
-4. Accessing the Instance Using Session Manager
-5. Running Commands on One or Multiple Instances Using Run Command
+1. Launch an EC2 Instance
+2. Create an IAM Role for AWS Systems Manager
+3. Attach the IAM Role to the EC2 Instance
+4. Access the Instance Using Session Manager
+5. Run Commands on One or Multiple Instances Using Run Command
 6. Open and run command on  AWS CloudShell
 
 ___
 
-## 1. Accessing EC2 Without SSH Using AWS Systems Manager
+## 1.Launch an EC2 Instance
 
 ___
 
-**Objective:** To Launching an EC2 Instance
+**Objective:** To Launch an EC2 Instance
 
 ___
 
@@ -58,7 +58,7 @@ Step 5: Launch the Instance
 
 ___
 
-## 2. Creating an IAM Role for AWS Systems Manager
+## 2. Create an IAM Role for AWS Systems Manager
 
 ___
 
@@ -90,7 +90,7 @@ Step 4: Name and Create the Role
 
 ___
 
-## 3. Attaching the IAM Role to the EC2 Instance
+## 3. Attach the IAM Role to the EC2 Instance
 
 ___
 
@@ -115,7 +115,7 @@ Step 3: Attach the Role
 
 ___
 
-## 4. Accessing the Instance Using Session Manager
+## 4. Access the Instance Using Session Manager
 
 ___
 
@@ -150,7 +150,7 @@ cat /etc/os-release
 sudo apt update
 ```
 
-## 5. Running Commands on One or Multiple Instances Using Run Command
+## 5. Run Commands on One or Multiple Instances Using Run Command
 
 ___
 
@@ -160,17 +160,17 @@ ___
 
 I followed the steps outlined below:
 
-step 1: Open Run Command
+Step 1: Open Run Command
 
 - From AWS Systems Manager, I navigated to Run Command and clicked Run command
 
-step 2: Select the Command Document
+Step 2: Select the Command Document
 
 - From the list of available documents, I selected **AWS-RunShellScript**
 
 NB: This document allows execution of Linux shell commands on one or multiple instances
 
-step 3:Enter Commands
+Step 3: Enter Commands
 
 - In the Commands section, I entered the commands I wanted to run, which are:
 
@@ -181,20 +181,21 @@ sudo apt update
 
 NB: Multiple commands can be added, or an entire shell script can be executed.
 
-step 4: Choose Target Instances
+Step 4: Choose Target Instances
 
 - I selected my target EC2 instance manually from my list
 (Alternatively, instances can be targeted using tags or resource groups)
 
-1. Execute the Command
+Step 5. Execute the Command
 
 - I clicked Run, my command execution status changed from In Progress to Success
 
-step 6: Review Output
+Step 6: Review Output
 
 - I selected my instance to view the command output. Standard output appeared under Output
 
 This approach allows centralized command execution across one or many servers, making it ideal for tasks like updates, configuration changes, or maintenance at scale.
+___
 
 ## 6. Open and run command on  AWS CloudShell
 
