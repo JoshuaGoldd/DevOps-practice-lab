@@ -1,0 +1,241 @@
+# Hands-On Project Report
+
+## Hosting a Static Website on Amazon S3 with Versioning and Access Logs
+
+---
+
+## Objective
+
+The objective of this exercise was to host a **static website** using **Amazon S3**, without using EC2, Apache, or any web server.
+I also aimed to understand how **versioning**, **public access**, and **server access logging** work in S3, which are important DevOps concepts for storage management, rollback, and auditing.
+
+---
+
+## Tools and Services i Used
+
+* Amazon S3
+* AWS Management Console
+* Static website template (downloaded from tooplate.com)
+* Web browser
+
+---
+
+## Step 1: Preparing the Website Files
+
+1. I downloaded a free static website template from **tooplate.com**.
+2. The template was downloaded as a ZIP file.
+3. I extracted the ZIP file, which produced a folder containing:
+
+   * HTML files
+   * CSS files
+   * JavaScript files
+   * Images and assets
+   * Readme
+4. These files were the contents I planned to upload to Amazon S3.
+
+![screenshot](<Images/S3 Downloaded file from tooplate-1.png>)
+
+![screenshot](<Images/S3 Extracted file from tooplate downloded zip file-1.png>)
+
+---
+
+## Step 2: Creating the Main S3 Bucket for Website Hosting
+
+1. I navigated to the **Amazon S3 service** in the AWS Console.
+2. I created a new bucket to host the website.
+3. I gave the bucket a **unique, lowercase name** which is **winter-gallery-s3**.
+4. During bucket creation, I **enabled versioning**.
+5. I completed the setup by creating the bucket.
+
+This bucket was used to store and serve the website files.
+
+![screenshot](<Images/S3 Create a bucket to hold the object template file-2.png>)
+
+![screenshot](<Images/S3 Create a bucket confirmed-1.png>)
+
+---
+
+## Step 3: Uploading Website Files to S3
+
+1. I opened the newly created bucket.
+2. I selected **Upload**.
+3. I dragged and dropped **all extracted website files** of 2151_winter_gallery into the bucket.
+4. I completed the upload using the AWS console UI.
+
+At this point, all files were stored in S3, but the website was not yet accessible.
+
+![screenshot](<Images/S3 Uploading a file.png>)
+
+![alt text](<Images/S3 uploaded file through dragging-1.png>)
+
+![alt text](<Images/S3 final uploaded file confirmed-1.png>)
+
+---
+
+## Step 4: Creating a Separate Bucket for Access Logs
+
+1. I created a **second S3 bucket**.
+2. This bucket was used **only for storing access logs**.
+3. I ensured the bucket name was lowercase and unique which is **winter-gallery-s3-accesslogs**.
+4. I created the bucket without additional configuration.
+
+This separation follows best practices for monitoring and auditing access.
+
+![alt text](<Images/S3 Create a bucket to hold the object template file-2.png>)
+
+![alt text](<Images/S3 second bucket creation-2.png>)
+
+---
+
+## Step 5: Configuring Public Access for Website Files
+
+1. I opened the main website bucket.
+2. Under **Permissions**, I edited **Block Public Access**.
+3. I unchecked the block public access option and saved the changes.
+4. Under **Object Ownership**, I enabled **ACLs**.
+5. I selected **all website objects**.
+6. I used **Actions → Make public using ACL**.
+7. I confirmed the warning since the website must be publicly accessible.
+
+Now, the website files were publicly readable.
+
+![alt text](<Images/S3 Block Public Access-1.png>)
+
+![alt text](<Images/S3 Block Public Access-2.png>)
+
+![alt text](<Images/S3 ACL enabled-1.png>)
+
+![alt text](Images/S3makepublicfile-4.png)
+
+---
+
+## Step 6: Enabling Static Website Hosting
+
+1. I opened the **Properties** tab of the bucket.
+2. I scrolled to **Static Website Hosting**.
+3. I enabled static website hosting.
+4. I set:
+
+   * **Index document**: `index.html`
+   * **Error document**: `error.html`
+5. I saved the changes.
+6. AWS provided a **static website URL** for the bucket.
+
+![alt text](<Images/S3 index.htm-1.png>)
+
+![alt text](<Images/S3 index.htm-2.png>)
+
+---
+
+## Step 7: Enabling Server Access Logging
+
+1. In the **Properties** section of the website bucket, I enabled **Server Access Logging**.
+2. I selected the previously created **log bucket** named **winter-gallery-s3-accesslogs** as the destination.
+3. I kept the default log format.
+4. I saved the configuration.
+
+AWS automatically created the required bucket policy to allow log delivery.
+
+![alt text](<Images/S3 server access log-1.png>)
+
+![alt text](<Images/S3 server access log-2.png>)
+
+![alt text](<Images/S3 server access log-3.png>)
+
+---
+
+## Step 8: Accessing the Website
+
+1. I copied the **S3 static website URL**.
+2. I pasted the URL into a web browser.
+3. The website loaded successfully, confirming the hosting setup worked.
+
+This confirmed that S3 can host static websites without servers or load balancers.
+
+![alt text](<Images/S3 Static website dns copied worked-1.png>)
+
+---
+
+## Step 9: Understanding and Testing S3 Versioning
+
+### Deleting a File
+
+1. I selected a file and deleted it.
+2. The file disappeared from the normal view.
+3. When I enabled **Show Versions**, I saw a **delete marker**.
+4. The original file still existed underneath.
+
+![alt text](<Images/s3 delete file-1.png>)
+
+![alt text](<Images/S3 show version after delete-1.png>)
+
+### Restoring a Deleted File
+
+1. I deleted the delete marker.
+2. The file immediately became visible again.
+
+![alt text](<Images/S3 visible file after delete-1.png>)
+
+### Overwriting a File
+
+1. I modified `index.html` locally.
+2. I uploaded the new `index.html` to the bucket.
+
+![alt text](<Images/S3 new index file uploaded-1.png>)
+
+3. A new version was created automatically.
+4. The website initially returned **403 Forbidden** because the new file was private.
+
+![alt text](<Images/S3 error showing due to new index file uploaded and by default is blocked from public access.png>)
+
+5. I made the new file public using ACLs.
+6. The website reflected the new content.
+
+![alt text](<Images/S3 make public using ACL for new index.html file-1.png>)
+
+![alt text](<Images/s3 index.html work-1.png>)
+
+### Rolling Back a Change
+
+1. I deleted the latest version of `index.html`.
+2. I permanently removed only that version.
+3. The previous version became active again.
+4. The website was restored successfully.
+
+![alt text](<Images/s3 previous index.html file restored.png>)
+
+---
+
+## Key Observations
+
+* Every uploaded object is **private by default**.
+* Making objects public is required for static hosting.
+* Versioning does **not overwrite files** — it creates new versions.
+* Deleting an object does not remove data unless all versions are deleted.
+* Versioning increases storage usage and cost.
+* Access logs are not immediate and appear after some time.
+
+---
+
+## This exercise demonstrates core DevOps principles
+
+* **Infrastructure without servers** (serverless static hosting)
+* **Version control for storage**
+* **Rollback and recovery**
+* **Audit and access logging**
+* **Cost and risk awareness**
+
+---
+
+## I successfully
+
+* Hosted a static website on Amazon S3
+* Enabled public access safely
+* Configured static website hosting
+* Implemented access logging
+* Tested versioning, deletion, and recovery
+* Understood the operational and cost implications
+
+This setup provides a simple, scalable, and cost-effective solution for hosting static web applications using AWS.
+
+---
